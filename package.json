@@ -10,8 +10,11 @@
 		"generate-icons": "npx @svgr/cli -d components/icons/icons components/icons/svg --ext=tsx"
 	},
 	"dependencies": {
+		"@types/d3": "^6.3.0",
 		"@typescript-eslint/parser": "^4.15.2",
+		"d3": "^6.5.0",
 		"next": "10.0.7",
+		"randomstring": "^1.1.5",
 		"react": "17.0.1",
 		"react-dom": "17.0.1",
 		"react-use": "^17.1.1",
@@ -24,6 +27,7 @@
 		"@testing-library/user-event": "^12.7.1",
 		"@types/jest": "^26.0.20",
 		"@types/node": "^14.14.28",
+		"@types/randomstring": "^1.1.6",
 		"@types/react": "^17.0.2",
 		"@typescript-eslint/eslint-plugin": "^4.15.2",
 		"babel-jest": "^26.6.3",

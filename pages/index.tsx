@@ -1,4 +1,5 @@
 import Head from "next/head"
+import { Chart } from "../components/chart/chart"
 import styles from "../styles/pages/home.module.scss"
 
 export default function Home(): JSX.Element {
@@ -9,6 +10,7 @@ export default function Home(): JSX.Element {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<h1>App</h1>
+			<Chart />
 			<footer className={styles.footer}>
 				<a
 					href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
