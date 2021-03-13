@@ -66,56 +66,71 @@ export const Chart: React.FC = () => {
 
 	const maxValue = max(data, d => d.units)
 
-	let y = useRef({
-		scale: scaleLinear()
-			.domain([0, maxValue as NumberValue])
-			.range([dimensions.height, 0]),
-	})
-	let x = useRef({
-		scale: scaleBand()
-			.domain(data.map(d => d.name))
-			.range([0, dimensions.width])
-			.padding(0.05),
-	})
-
 	const [selection, setSelection] = useState<null | Selection<
 		SVGSVGElement | null,
 		unknown,
 		null,
 		undefined
 	>>(null)
-	// const yAxis = axisLeft(y.current.scale)
-	// 	.ticks(5)
-	// 	.tickFormat(t => `${t as number}u`)
-	// const xAxis = axisBottom(x.current.scale).ticks(5)
 
 	useEffect(() => {
+		let y = scaleLinear()
+			.domain([0, maxValue as NumberValue])
+			.range([dimensions.height, 0])
+
+		let x = scaleBand()
+			.domain(data.map(d => d.name))
+			.range([0, dimensions.width])
+			.padding(0.05)
 		if (!selection) {
 			setSelection(select(svgRef.current))
 		} else {
+			const yAxis = axisLeft(y).tickFormat(t => `${t as number}u`)
+			const xAxis = axisBottom(x)
+			/**
+			 * xAxis group
+			 */
 			selection
 				.append("g")
-				.attr("height", dimensions.chartHeight)
-				.attr("width", dimensions.chartWidth)
-				.attr("id", "chart-container")
+				.call(xAxis)
+				.attr(
+					"transform",
+					`translate(${dimensions.marginLeft}, ${dimensions.chartHeight})`
+				)
+				.attr("height", dimensions.height - dimensions.chartHeight)
+				.attr("id", "axis")
+
+			/**
+			 * yAxis group
+			 */
+			selection
+				.append("g")
+				.call(yAxis)
 				.attr(
 					"transform",
 					`translate(${
 						dimensions.marginLeft
 					}, ${-dimensions.marginBottom})`
 				)
+				.attr("id", "axis")
+			/**
+			 * Bars - rects inside g
+			 */
+			selection
+				.append("g")
+				.attr("height", dimensions.chartHeight)
+				.attr("width", dimensions.chartWidth)
+				.attr("id", "chart-container")
+				.attr("transform", `translate(${dimensions.marginLeft}, 0)`)
 				.selectAll("rect")
 				.data(data)
 				.enter()
 				.append("rect")
-				.attr("x", d => x.current.scale(d.name) ?? null)
-				.attr("y", d => y.current.scale(d.units))
+				.attr("x", d => x(d.name) ?? null)
+				.attr("y", d => y(d.units))
 				.attr("fill", d => d.color)
-				.attr("width", x.current.scale.bandwidth())
-				.attr(
-					"height",
-					d => dimensions.chartHeight - y.current.scale(d.units)
-				)
+				.attr("width", x.bandwidth())
+				.attr("height", d => dimensions.chartHeight - y(d.units))
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,15 +141,49 @@ export const Chart: React.FC = () => {
 	 * runs everytime data changes so updates can be made to the chart
 	 */
 	useEffect(() => {
-		if (selection) {
-			y.current.scale = scaleLinear()
-				.domain([0, maxValue as NumberValue])
-				.range([0, dimensions.chartHeight])
+		const y = scaleLinear()
+			.domain([0, maxValue as NumberValue])
+			.range([dimensions.height, 0])
 
-			x.current.scale = scaleBand()
-				.domain(data.map(d => d.name))
-				.range([0, dimensions.chartWidth])
-				.paddingInner(0.05)
+		const x = scaleBand()
+			.domain(data.map(d => d.name))
+			.range([0, dimensions.width])
+			.padding(0.05)
+		if (selection) {
+			const yAxis = axisLeft(y).tickFormat(t => `${t as number}u`)
+			const xAxis = axisBottom(x)
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+
+			const axis = selection.selectAll("#axis")
+
+			axis.transition().ease(easeElastic).duration(400).remove()
+
+			/**
+			 * xAxis group
+			 */
+			selection
+				.append("g")
+				.call(xAxis)
+				.attr(
+					"transform",
+					`translate(${dimensions.marginLeft}, ${dimensions.chartHeight})`
+				)
+				.attr("height", dimensions.height - dimensions.chartHeight)
+				.attr("id", "axis")
+
+			/**
+			 * yAxis group
+			 */
+			selection
+				.append("g")
+				.call(yAxis)
+				.attr(
+					"transform",
+					`translate(${
+						dimensions.marginLeft
+					}, ${-dimensions.marginBottom})`
+				)
+				.attr("id", "axis")
 
 			const rects = selection
 				.select("#chart-container")
@@ -153,34 +202,25 @@ export const Chart: React.FC = () => {
 			rects
 				.transition()
 				.delay(300)
-				.attr("x", d => x.current.scale(d.name) ?? null)
-				.attr("y", d => y.current.scale(d.units))
-				.attr("width", x.current.scale.bandwidth())
-				.attr(
-					"height",
-					d => dimensions.chartHeight - y.current.scale(d.units)
-				)
+				.attr("x", d => x(d.name) ?? null)
+				.attr("y", d => y(d.units))
+				.attr("width", x.bandwidth())
+				.attr("height", d => dimensions.chartHeight - y(d.units))
 				.attr("fill", d => d.color)
 
 			rects
 				.enter()
 				.append("rect")
-				.attr("x", d => x.current.scale(d.name) ?? null)
-				.attr("width", x.current.scale.bandwidth())
+				.attr("x", d => x(d.name) ?? null)
+				.attr("width", x.bandwidth())
 				.attr("height", 0)
 				.attr("y", dimensions.chartHeight)
 				.transition()
 				.delay(400)
 				.duration(500)
 				.ease(easeElastic)
-				.attr(
-					"height",
-					d => dimensions.height - y.current.scale(d.units)
-				)
-				.attr(
-					"y",
-					d => y.current.scale(d.units) - dimensions.marginBottom
-				)
+				.attr("height", d => dimensions.height - y(d.units))
+				.attr("y", d => y(d.units) - dimensions.marginBottom)
 				.attr("fill", d => d.color)
 		}
 	}, [data])
@@ -205,6 +245,10 @@ export const Chart: React.FC = () => {
 	}
 
 	const removeLast = (): void => {
+		// if (selection) {
+		// 	console.log("hello")
+		// 	selection.selectAll("#axis").exit().remove()
+		// }
 		if (data.length === 0) {
 			return
 		} else {
@@ -334,7 +378,7 @@ export const Chart: React.FC = () => {
 // 				.enter()
 // 				.append("rect")
 // 				.attr("id", "bar")
-// 				.attr("width", x.current.scale.bandwidth())
+// 				.attr("width",x.bandwidth())
 // 				.attr("height", 0)
 // 				.attr("fill", d => d.color)
 // 				.attr("x", d => x.current.scale(d.name) ?? null)
