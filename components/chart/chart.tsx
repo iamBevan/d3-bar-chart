@@ -1,5 +1,5 @@
-import { Selection } from "d3"
-import { useRef, useState } from "react"
+import { max, scaleBand, scaleLinear, select, Selection } from "d3"
+import { useEffect, useRef, useState } from "react"
 import randomstring from "randomstring"
 import { XAxis } from "./xAxis"
 import { YAxis } from "./yAxis"
@@ -60,6 +60,42 @@ export const Chart: React.FC = () => {
 		null,
 		undefined
 	>>(null)
+
+	const maxValue = max(data, d => d.units) as number
+
+	useEffect(() => {
+		let y = scaleLinear()
+			.domain([0, maxValue])
+			.range([dimensions.height, 0])
+
+		let x = scaleBand()
+			.domain(data.map(d => d.name))
+			.range([0, dimensions.chartWidth])
+			.padding(0.05)
+		if (!selection) {
+			setSelection(select(svgRef.current))
+		} else {
+			/**
+			 * Bars - rects inside g
+			 */
+			selection
+				.append("g")
+				.attr("height", dimensions.chartHeight)
+				.attr("width", 100)
+				.attr("id", "chart-container")
+				.attr("transform", `translate(${dimensions.marginLeft}, 0)`)
+				.selectAll("rect")
+				.data(data)
+				.enter()
+				.append("rect")
+				.attr("x", d => x(d.name) ?? null)
+				.attr("y", d => y(d.units))
+				.attr("fill", d => d.color)
+				.attr("width", x.bandwidth())
+				.attr("height", d => dimensions.chartHeight - y(d.units))
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selection])
 
 	function getRandomColor(): string {
 		let letters = "0123456789ABCDEF"

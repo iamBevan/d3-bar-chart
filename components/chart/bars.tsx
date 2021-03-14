@@ -1,7 +1,7 @@
 import { max } from "d3-array"
 import { easeElastic } from "d3-ease"
 import { scaleBand, scaleLinear } from "d3-scale"
-import { select, Selection } from "d3-selection"
+import { Selection } from "d3-selection"
 import {
 	Dispatch,
 	FC,
@@ -22,59 +22,10 @@ interface BarsProps {
 		marginLeft: number
 		marginBottom: number
 	}
-	setSelection: Dispatch<
-		SetStateAction<Selection<
-			SVGSVGElement | null,
-			unknown,
-			null,
-			undefined
-		> | null>
-	>
-	svgRef: MutableRefObject<SVGSVGElement | null>
 }
 
-export const Bars: FC<BarsProps> = ({
-	dimensions,
-	data,
-	setSelection,
-	selection,
-	svgRef,
-}) => {
+export const Bars: FC<BarsProps> = ({ dimensions, data, selection }) => {
 	const maxValue = max(data, d => d.units) as number
-
-	useEffect(() => {
-		let y = scaleLinear()
-			.domain([0, maxValue])
-			.range([dimensions.height, 0])
-
-		let x = scaleBand()
-			.domain(data.map(d => d.name))
-			.range([0, dimensions.chartWidth])
-			.padding(0.05)
-		if (!selection) {
-			setSelection(select(svgRef.current))
-		} else {
-			/**
-			 * Bars - rects inside g
-			 */
-			selection
-				.append("g")
-				.attr("height", dimensions.chartHeight)
-				.attr("width", 100)
-				.attr("id", "chart-container")
-				.attr("transform", `translate(${dimensions.marginLeft}, 0)`)
-				.selectAll("rect")
-				.data(data)
-				.enter()
-				.append("rect")
-				.attr("x", d => x(d.name) ?? null)
-				.attr("y", d => y(d.units))
-				.attr("fill", d => d.color)
-				.attr("width", x.bandwidth())
-				.attr("height", d => dimensions.chartHeight - y(d.units))
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selection])
 
 	/**
 	 * another useEffect with data as its dependency

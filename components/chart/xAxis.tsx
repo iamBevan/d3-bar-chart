@@ -53,18 +53,19 @@ export const XAxis: FC<XAxisProps> = ({
 	])
 
 	useEffect(() => {
-		let x = scaleBand()
-			.domain(data.map(d => d.name))
-			.range([0, dimensions.chartWidth])
-			.padding(0.05)
-
 		/**
 		 * xAxis group
 		 */
 		if (selection) {
+			let x = scaleBand()
+				.domain(data.map(d => d.name))
+				.range([0, dimensions.chartWidth])
+				.padding(0.05)
 			const xAxis = axisBottom(x)
 
 			const axisXSelection = selection.selectAll("#x")
+
+			console.log(selection)
 
 			axisXSelection
 				.transition()
