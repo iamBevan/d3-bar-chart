@@ -80,7 +80,7 @@ export const Chart: React.FC = () => {
 
 		let x = scaleBand()
 			.domain(data.map(d => d.name))
-			.range([0, dimensions.width])
+			.range([0, dimensions.chartWidth])
 			.padding(0.05)
 		if (!selection) {
 			setSelection(select(svgRef.current))
@@ -119,7 +119,7 @@ export const Chart: React.FC = () => {
 			selection
 				.append("g")
 				.attr("height", dimensions.chartHeight)
-				.attr("width", dimensions.chartWidth)
+				.attr("width", 100)
 				.attr("id", "chart-container")
 				.attr("transform", `translate(${dimensions.marginLeft}, 0)`)
 				.selectAll("rect")
@@ -147,7 +147,7 @@ export const Chart: React.FC = () => {
 
 		const x = scaleBand()
 			.domain(data.map(d => d.name))
-			.range([0, dimensions.width])
+			.range([0, dimensions.chartWidth])
 			.padding(0.05)
 		if (selection) {
 			console.log("dog")
@@ -275,7 +275,7 @@ export const Chart: React.FC = () => {
 	])
 
 	function getRandomColor(): string {
-		let letters = "0123456789ABCDE"
+		let letters = "0123456789ABCDEF"
 		let color = "#"
 		for (let i = 0; i < 6; i++) {
 			color += letters[Math.floor(Math.random() * 16)]
