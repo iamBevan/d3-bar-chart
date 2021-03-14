@@ -1,11 +1,12 @@
-import { max } from "d3-array"
+import { max, maxIndex } from "d3-array"
 import { easeElastic } from "d3-ease"
 import { scaleBand, scaleLinear } from "d3-scale"
-import { Selection } from "d3-selection"
-import {
+import { select, Selection } from "d3-selection"
+import React, {
 	Dispatch,
 	FC,
 	MutableRefObject,
+	Ref,
 	SetStateAction,
 	useEffect,
 } from "react"
@@ -24,8 +25,41 @@ interface BarsProps {
 	}
 }
 
-export const Bars: FC<BarsProps> = ({ dimensions, data, selection }) => {
-	const maxValue = max(data, d => d.units) as number
+const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
+	const maxValue = max(data, d => d.units)
+
+	useEffect(() => {
+		let y = scaleLinear()
+			.domain([0, maxValue as number])
+			.range([dimensions.height, 0])
+
+		let x = scaleBand()
+			.domain(data.map(d => d.name))
+			.range([0, dimensions.chartWidth])
+			.padding(0.05)
+
+		if (selection) {
+			/**
+			 * Bars - rects inside g
+			 */
+			selection
+				.append("g")
+				.attr("height", dimensions.chartHeight)
+				.attr("width", 100)
+				.attr("id", "chart-container")
+				.attr("transform", `translate(${dimensions.marginLeft}, 0)`)
+				.selectAll("rect")
+				.data(data)
+				.enter()
+				.append("rect")
+				.attr("x", d => x(d.name) ?? null)
+				.attr("y", d => y(d.units))
+				.attr("fill", d => d.color)
+				.attr("width", x.bandwidth())
+				.attr("height", d => dimensions.chartHeight - y(d.units))
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selection])
 
 	/**
 	 * another useEffect with data as its dependency
@@ -33,7 +67,7 @@ export const Bars: FC<BarsProps> = ({ dimensions, data, selection }) => {
 	 */
 	useEffect(() => {
 		const y = scaleLinear()
-			.domain([0, maxValue])
+			.domain([0, maxValue as number])
 			.range([dimensions.chartHeight, 0])
 
 		const x = scaleBand()
@@ -91,3 +125,5 @@ export const Bars: FC<BarsProps> = ({ dimensions, data, selection }) => {
 	])
 	return <>Bars</>
 }
+
+export default Bars
