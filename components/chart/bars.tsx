@@ -4,9 +4,10 @@ import { scaleBand, scaleLinear } from "d3-scale"
 import { Selection } from "d3-selection"
 import React, { FC, useEffect } from "react"
 import { Data } from "./chart"
+import { useFirstMountState } from "react-use"
 
 interface BarsProps {
-	selection: null | Selection<SVGSVGElement | null, unknown, null, undefined>
+	selection: Selection<SVGSVGElement | null, unknown, null, undefined>
 	data: Data[]
 	dimensions: {
 		width: number
@@ -19,6 +20,7 @@ interface BarsProps {
 }
 
 const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
+	const isFirstMount = useFirstMountState()
 	const maxValue = max(data, d => d.units)
 
 	useEffect(() => {
@@ -31,7 +33,7 @@ const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
 			.range([0, dimensions.chartWidth])
 			.padding(0.05)
 
-		if (selection) {
+		if (selection && isFirstMount) {
 			/**
 			 * Bars - rects inside g
 			 */
@@ -51,8 +53,16 @@ const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
 				.attr("width", x.bandwidth())
 				.attr("height", d => dimensions.chartHeight - y(d.units))
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selection])
+	}, [
+		data,
+		dimensions.chartHeight,
+		dimensions.chartWidth,
+		dimensions.height,
+		dimensions.marginLeft,
+		isFirstMount,
+		maxValue,
+		selection,
+	])
 
 	/**
 	 * another useEffect with data as its dependency

@@ -1,9 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { max } from "d3-array"
 import { axisLeft } from "d3-axis"
 import { scaleLinear } from "d3-scale"
 import { Selection } from "d3-selection"
 import { FC, useEffect } from "react"
+import { useFirstMountState } from "react-use"
 import { Data } from "./chart"
 
 interface YAxisProps {
@@ -24,10 +24,12 @@ export const YAxis: FC<YAxisProps> = ({
 	data,
 	dimensions,
 }): JSX.Element => {
+	const isFirstMount = useFirstMountState()
+
 	useEffect(() => {
 		const maxValue = max(data, d => d.units) as number
 
-		if (selection) {
+		if (selection && isFirstMount) {
 			const y = scaleLinear()
 				.domain([0, maxValue])
 				.range([dimensions.chartHeight, 0])
@@ -48,9 +50,11 @@ export const YAxis: FC<YAxisProps> = ({
 				.attr("id", "y")
 		}
 	}, [
+		data,
 		dimensions.chartHeight,
 		dimensions.marginBottom,
 		dimensions.marginLeft,
+		isFirstMount,
 		selection,
 	])
 	useEffect(() => {

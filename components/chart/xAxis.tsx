@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { axisBottom } from "d3-axis"
 import { scaleBand } from "d3-scale"
 import { Selection } from "d3-selection"
 import { useEffect, FC } from "react"
+import { useFirstMountState } from "react-use"
 import { Data } from "./chart"
 
 interface XAxisProps {
@@ -22,13 +24,15 @@ export const XAxis: FC<XAxisProps> = ({
 	data,
 	dimensions,
 }): JSX.Element => {
+	const isFirstMount = useFirstMountState()
+
 	useEffect(() => {
 		let x = scaleBand()
 			.domain(data.map(d => d.name))
 			.range([0, dimensions.chartWidth])
 			.padding(0.05)
 
-		if (selection) {
+		if (selection && isFirstMount) {
 			const xAxis = axisBottom(x)
 			/**
 			 * xAxis group
@@ -42,6 +46,11 @@ export const XAxis: FC<XAxisProps> = ({
 				)
 				.attr("height", dimensions.height - dimensions.chartHeight)
 				.attr("id", "x")
+				.selectAll("text")
+				.style("text-anchor", "end")
+				.attr("dx", "-.8em")
+				.attr("dy", ".15em")
+				.attr("transform", "rotate(-65)")
 		}
 	}, [
 		data,

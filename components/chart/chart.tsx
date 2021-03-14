@@ -95,26 +95,33 @@ export const Chart: React.FC = () => {
 
 	return (
 		<>
+			{console.log("selection", selection)}
 			<svg
 				ref={svgRef}
 				width={dimensions.width}
 				height={dimensions.height}
 			>
-				<Bars
-					data={data}
-					dimensions={dimensions}
-					selection={selection}
-				/>
-				<XAxis
-					data={data}
-					dimensions={dimensions}
-					selection={selection}
-				/>
-				<YAxis
-					data={data}
-					dimensions={dimensions}
-					selection={selection}
-				/>
+				{selection ? (
+					<>
+						<Bars
+							data={data}
+							dimensions={dimensions}
+							selection={selection}
+						/>
+						<XAxis
+							data={data}
+							dimensions={dimensions}
+							selection={selection}
+						/>
+						<YAxis
+							data={data}
+							dimensions={dimensions}
+							selection={selection}
+						/>
+					</>
+				) : (
+					<h1>Hello</h1>
+				)}
 			</svg>
 			<button onClick={addRandom}>+</button>
 			<button onClick={removeLast}>-</button>
