@@ -32,7 +32,7 @@ export const YAxis: FC<YAxisProps> = ({
 				.domain([0, maxValue])
 				.range([dimensions.chartHeight, 0])
 
-			const yAxis = axisLeft(y).tickFormat(t => `${t}u`)
+			const yAxis = axisLeft(y).tickFormat(t => `${t as number}u`)
 			/**
 			 * yAxis group
 			 */

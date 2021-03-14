@@ -1,17 +1,5 @@
-import {
-	max,
-	axisBottom,
-	axisLeft,
-	NumberValue,
-	scaleBand,
-	scaleLinear,
-	select,
-	selectAll,
-	Selection,
-	easeLinear,
-	easeElastic,
-} from "d3"
-import { useEffect, useRef, useState } from "react"
+import { Selection } from "d3"
+import { useRef, useState } from "react"
 import randomstring from "randomstring"
 import { XAxis } from "./xAxis"
 import { YAxis } from "./yAxis"
