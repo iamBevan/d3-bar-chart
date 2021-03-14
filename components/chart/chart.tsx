@@ -1,4 +1,4 @@
-import { max, scaleBand, scaleLinear, select, Selection } from "d3"
+import { select, Selection } from "d3"
 import { useEffect, useRef, useState } from "react"
 import randomstring from "randomstring"
 import { XAxis } from "./xAxis"

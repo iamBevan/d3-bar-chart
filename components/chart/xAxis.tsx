@@ -65,8 +65,6 @@ export const XAxis: FC<XAxisProps> = ({
 
 			const axisXSelection = selection.selectAll("#x")
 
-			console.log(selection)
-
 			axisXSelection
 				.transition()
 				.style("opacity", 0)

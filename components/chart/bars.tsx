@@ -1,15 +1,8 @@
-import { max, maxIndex } from "d3-array"
+import { max } from "d3-array"
 import { easeElastic } from "d3-ease"
 import { scaleBand, scaleLinear } from "d3-scale"
-import { select, Selection } from "d3-selection"
-import React, {
-	Dispatch,
-	FC,
-	MutableRefObject,
-	Ref,
-	SetStateAction,
-	useEffect,
-} from "react"
+import { Selection } from "d3-selection"
+import React, { FC, useEffect } from "react"
 import { Data } from "./chart"
 
 interface BarsProps {
