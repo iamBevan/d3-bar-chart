@@ -143,7 +143,7 @@ export const Chart: React.FC = () => {
 	useEffect(() => {
 		const y = scaleLinear()
 			.domain([0, maxValue as NumberValue])
-			.range([dimensions.height, 0])
+			.range([dimensions.chartHeight, 0])
 
 		const x = scaleBand()
 			.domain(data.map(d => d.name))
@@ -184,24 +184,14 @@ export const Chart: React.FC = () => {
 			selection
 				.append("g")
 				// .attr("transform", `translate(${dimensions.marginLeft}, ${0})`)
-				.attr(
-					"transform",
-					`translate(${
-						dimensions.marginLeft
-					}, ${-dimensions.marginBottom})`
-				)
+				.attr("transform", `translate(${dimensions.marginLeft}, ${0})`)
 				.style("opacity", 0)
 				.call(yAxis)
 				.transition()
 				// .ease(easeElastic)
 				.duration(300)
 				.style("opacity", 1)
-				.attr(
-					"transform",
-					`translate(${
-						dimensions.marginLeft
-					}, ${-dimensions.marginBottom})`
-				)
+				.attr("transform", `translate(${dimensions.marginLeft}, ${0})`)
 				.attr("id", "y")
 
 			/**
@@ -263,6 +253,7 @@ export const Chart: React.FC = () => {
 				.attr("y", d => y(d.units) - dimensions.marginBottom)
 				.attr("fill", d => d.color)
 		}
+		console.log(data)
 	}, [
 		data,
 		dimensions.chartHeight,
@@ -285,7 +276,7 @@ export const Chart: React.FC = () => {
 
 	const addRandom = (): void => {
 		const dataToBeAdded = {
-			name: randomstring.generate(10),
+			name: randomstring.generate(4),
 			units: Math.floor(Math.random() * 99),
 			color: getRandomColor(),
 		}
