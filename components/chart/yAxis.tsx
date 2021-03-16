@@ -41,12 +41,7 @@ export const YAxis: FC<YAxisProps> = ({
 			selection
 				.append("g")
 				.call(yAxis)
-				.attr(
-					"transform",
-					`translate(${
-						dimensions.marginLeft
-					}, ${-dimensions.marginBottom})`
-				)
+				.attr("transform", `translate(${dimensions.marginLeft}, ${0})`)
 				.attr("id", "y")
 		}
 	}, [
@@ -60,7 +55,7 @@ export const YAxis: FC<YAxisProps> = ({
 	useEffect(() => {
 		const maxValue = max(data, d => d.units) as number
 
-		if (selection) {
+		if (selection && !isFirstMount) {
 			const y = scaleLinear()
 				.domain([0, maxValue])
 				.range([dimensions.chartHeight, 0])
@@ -89,6 +84,12 @@ export const YAxis: FC<YAxisProps> = ({
 				.attr("transform", `translate(${dimensions.marginLeft}, ${0})`)
 				.attr("id", "y")
 		}
-	}, [data, dimensions.chartHeight, dimensions.marginLeft, selection])
+	}, [
+		data,
+		dimensions.chartHeight,
+		dimensions.marginLeft,
+		isFirstMount,
+		selection,
+	])
 	return <>Y Axis</>
 }

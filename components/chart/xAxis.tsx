@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { axisBottom } from "d3-axis"
 import { scaleBand } from "d3-scale"
 import { Selection } from "d3-selection"
@@ -58,6 +57,7 @@ export const XAxis: FC<XAxisProps> = ({
 		dimensions.chartWidth,
 		dimensions.height,
 		dimensions.marginLeft,
+		isFirstMount,
 		selection,
 	])
 
@@ -65,7 +65,7 @@ export const XAxis: FC<XAxisProps> = ({
 		/**
 		 * xAxis group
 		 */
-		if (selection) {
+		if (selection && !isFirstMount) {
 			let x = scaleBand()
 				.domain(data.map(d => d.name))
 				.range([0, dimensions.chartWidth])
@@ -74,34 +74,34 @@ export const XAxis: FC<XAxisProps> = ({
 
 			const axisXSelection = selection.selectAll("#x")
 
-			axisXSelection
-				.transition()
-				.style("opacity", 0)
-				.duration(300)
-				.remove()
+			axisXSelection.transition().style("opacity", 0).delay(300).remove()
 
 			selection
 				.append("g")
-				.attr(
-					"transform",
-					`translate(${dimensions.marginLeft}, ${dimensions.chartHeight})`
-				)
-				.style("opacity", 0)
 				.call(xAxis)
-				.transition()
-				.duration(300)
-				.style("opacity", 1)
+				.style("opacity", 0)
 				.attr(
 					"transform",
 					`translate(${dimensions.marginLeft}, ${dimensions.chartHeight})`
 				)
+				.transition()
+				.delay(300)
+				.style("opacity", 1)
+				.attr("height", dimensions.height - dimensions.chartHeight)
 				.attr("id", "x")
+				.selectAll("text")
+				.style("text-anchor", "end")
+				.attr("dx", "-.8em")
+				.attr("dy", ".15em")
+				.attr("transform", "rotate(-65)")
 		}
 	}, [
 		data,
 		dimensions.chartHeight,
 		dimensions.chartWidth,
+		dimensions.height,
 		dimensions.marginLeft,
+		isFirstMount,
 		selection,
 	])
 	return <>X Axis</>

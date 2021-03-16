@@ -64,10 +64,6 @@ const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
 		selection,
 	])
 
-	/**
-	 * another useEffect with data as its dependency
-	 * runs everytime data changes so updates can be made to the chart
-	 */
 	useEffect(() => {
 		const y = scaleLinear()
 			.domain([0, maxValue as number])
@@ -88,7 +84,7 @@ const Bars: FC<BarsProps> = ({ data, dimensions, selection }) => {
 				.exit()
 				.transition()
 				.ease(easeElastic)
-				.duration(400)
+				.duration(300)
 				.attr("height", 0)
 				.attr("y", dimensions.chartHeight)
 				.remove()

@@ -95,13 +95,12 @@ export const Chart: React.FC = () => {
 
 	return (
 		<>
-			{console.log("selection", selection)}
 			<svg
 				ref={svgRef}
 				width={dimensions.width}
 				height={dimensions.height}
 			>
-				{selection ? (
+				{selection && (
 					<>
 						<Bars
 							data={data}
@@ -119,8 +118,6 @@ export const Chart: React.FC = () => {
 							selection={selection}
 						/>
 					</>
-				) : (
-					<h1>Hello</h1>
 				)}
 			</svg>
 			<button onClick={addRandom}>+</button>
